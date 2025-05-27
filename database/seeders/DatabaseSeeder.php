@@ -9,8 +9,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        Category::factory(5)
-            ->hasProducts(10)
-            ->create();
+        Category::factory(5)->create();
+        \App\Models\Product::factory(50)->create();
+
     }
 }
