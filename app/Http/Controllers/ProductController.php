@@ -48,9 +48,11 @@ class ProductController extends Controller
     /**
      * Detalle de un producto.
      */
-    public function show($id)
+    public function show(Product $product)
     {
-        $product = Product::with('category')->findOrFail($id);
+
+        $product->load('category');
+
         return view('products.show', compact('product'));
     }
 }

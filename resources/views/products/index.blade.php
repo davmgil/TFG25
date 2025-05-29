@@ -83,7 +83,7 @@
 
   {{-- ==== PAGINACIÓN ==== --}}
   <div class="mt-4">
-    {{ $products->links() }}
+    {{ $products->links('pagination::simple-bootstrap-4') }}
   </div>
 </div>
 @endsection

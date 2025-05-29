@@ -8,5 +8,11 @@ Route::get('/', function () {
 });
 
 // Este resource debe incluir show:
-Route::resource('products', ProductController::class)
-     ->only(['index', 'show']);
+// Listado de productos
+Route::get('/products', [ProductController::class, 'index'])
+     ->name('products.index');
+
+// Detalle de producto (Punto 2)
+Route::get('/products/{product}', [ProductController::class, 'show'])
+     ->name('products.show');
+

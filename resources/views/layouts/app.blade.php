@@ -13,7 +13,7 @@
     <div class="container">
       <a class="navbar-brand d-flex align-items-center" href="{{ route('products.index') }}">
         <img src="{{ asset('images/logo.png') }}" alt="Logo" width="30" height="30" class="me-2">
-        <span>FreshHub</span>
+        <a class="nav-link" href="/">FreshHub</a>
       </a>
 
       <form class="d-none d-lg-flex flex-grow-1 mx-3" method="GET" action="{{ route('products.index') }}">
