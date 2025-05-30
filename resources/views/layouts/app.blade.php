@@ -11,31 +11,65 @@
 
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container">
+      {{-- Logo y nombre --}}
       <a class="navbar-brand d-flex align-items-center" href="{{ route('products.index') }}">
         <img src="{{ asset('images/logo.png') }}" alt="Logo" width="30" height="30" class="me-2">
-        <a class="nav-link" href="/">FreshHub</a>
+        <span>FreshHub</span>
       </a>
 
-      <form class="d-none d-lg-flex flex-grow-1 mx-3" method="GET" action="{{ route('products.index') }}">
-        <input
-          class="form-control"
-          type="search"
-          name="search"
-          placeholder="Buscar productos..."
-          value="{{ request('search') }}"
-        >
-      </form>
+      {{-- Botón hamburguesa para pantallas pequeñas --}}
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-      <div class="collapse navbar-collapse">
+      {{-- Menú principal --}}
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}">Productos</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
         </ul>
-      </div>
 
-      <div class="d-flex">
-        <a href="#" class="btn btn-outline-success me-2">Mi cuenta</a>
-        <a href="#" class="btn btn-success">Carrito</a>
+        {{-- Buscador visible en pantallas grandes --}}
+        <form class="d-none d-lg-flex mx-3 flex-grow-1" method="GET" action="{{ route('products.index') }}">
+          <input
+            class="form-control"
+            type="search"
+            name="search"
+            placeholder="Buscar productos..."
+            value="{{ request('search') }}"
+          >
+        </form>
+
+        {{-- Enlaces de autenticación --}}
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          @guest
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('login') }}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('register') }}">Register</a>
+            </li>
+          @else
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('profile.edit') }}">Mi cuenta</a>
+            </li>
+            <li class="nav-item">
+              <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                @csrf
+                <button class="btn nav-link" style="border:none; background:none; cursor:pointer;">
+                  Logout
+                </button>
+              </form>
+            </li>
+          @endguest
+
+          {{-- Carrito (visible siempre) --}}
+          <li class="nav-item">
+            <a class="btn btn-success ms-3" href="#">
+              <i class="bi bi-cart3"></i> Carrito
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
   </nav>
@@ -44,6 +78,8 @@
     @yield('content')
   </main>
 
+  <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
