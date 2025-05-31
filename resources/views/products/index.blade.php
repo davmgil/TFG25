@@ -3,6 +3,11 @@
 @section('content')
 <div class="container my-5">
 
+  {{-- ==== Mensajes flash ==== --}}
+  @if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+  @endif
+
   {{-- ==== BÚSQUEDA Y FILTROS ==== --}}
   <form method="GET" action="{{ route('products.index') }}" class="mb-4 d-flex flex-wrap gap-2">
     <input
@@ -21,7 +26,8 @@
     >
       <option value="">Todas las categorías</option>
       @foreach($categories as $cat)
-        <option value="{{ $cat->id }}"
+        <option
+          value="{{ $cat->id }}"
           @selected(request('category_id') == $cat->id)
         >{{ $cat->name }}</option>
       @endforeach
@@ -69,8 +75,19 @@
               {{ Str::limit($product->description, 60) }}
             </p>
             <p class="mt-auto fw-bold">${{ number_format($product->price, 2) }}</p>
-            <a href="{{ route('products.show', $product) }}" class="btn btn-sm btn-outline-primary mb-2">Ver detalles</a>
-            <a href="#" class="btn btn-warning btn-sm">Añadir al carrito</a>
+
+            {{-- Botón “Ver detalles” --}}
+            <a href="{{ route('products.show', $product) }}" class="btn btn-sm btn-outline-primary mb-2">
+              Ver detalles
+            </a>
+
+            {{-- Formulario para “Añadir al carrito” --}}
+            <form method="POST" action="{{ route('cart.add', $product) }}">
+              @csrf
+              <button type="submit" class="btn btn-warning btn-sm">
+                Añadir al carrito
+              </button>
+            </form>
           </div>
         </div>
       </div>

@@ -6,13 +6,16 @@
   <title>FreshHub</title>
   <!-- CDN Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons (para el icono del carrito) -->
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 <body>
 
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container">
-      {{-- Logo y nombre --}}
-      <a class="navbar-brand d-flex align-items-center" href="{{ route('products.index') }}">
+      {{-- Logo y nombre (ambos apuntan a la ruta raíz "/") --}}
+      <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
         <img src="{{ asset('images/logo.png') }}" alt="Logo" width="30" height="30" class="me-2">
         <span>FreshHub</span>
       </a>
@@ -25,8 +28,12 @@
       {{-- Menú principal --}}
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}">Productos</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('products.index') }}">Productos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Blog</a>
+          </li>
         </ul>
 
         {{-- Buscador visible en pantallas grandes --}}
@@ -40,7 +47,7 @@
           >
         </form>
 
-        {{-- Enlaces de autenticación --}}
+        {{-- Enlaces de autenticación y carrito --}}
         <ul class="navbar-nav mb-2 mb-lg-0">
           @guest
             <li class="nav-item">
@@ -64,9 +71,24 @@
           @endguest
 
           {{-- Carrito (visible siempre) --}}
-          <li class="nav-item">
-            <a class="btn btn-success ms-3" href="#">
-              <i class="bi bi-cart3"></i> Carrito
+          <li class="nav-item position-relative">
+            <a class="btn btn-success ms-3 d-flex align-items-center" href="{{ route('cart.index') }}">
+              <i class="bi bi-cart3 me-1"></i>
+              Carrito
+              @php
+                // Obtener el carrito de la sesión (array de [product_id => cantidad])
+                $cart = session('cart', []);
+                // Sumar todas las cantidades para mostrar el total de unidades
+                $totalQuantity = array_sum($cart);
+              @endphp
+              @if($totalQuantity > 0)
+                <span
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  style="font-size: 0.65rem;"
+                >
+                  {{ $totalQuantity }}
+                </span>
+              @endif
             </a>
           </li>
         </ul>
@@ -80,6 +102,5 @@
 
   <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

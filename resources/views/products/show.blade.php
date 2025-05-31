@@ -1,21 +1,48 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="section">
-        <h2>Detalle de producto</h2>
+<div class="container">
 
-        <div class="product-detail">
-            <img src="{{ $product->image ?? 'https://via.placeholder.com/300' }}"
-                 alt="{{ $product->name }}"
-                 style="max-width:300px; display:block; margin-bottom:20px;">
+  {{-- Mensajes flash --}}
+  @if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+  @endif
 
-            <h3>{{ $product->name }}</h3>
-            <p><strong>Precio:</strong> {{ number_format($product->price, 2) }} €</p>
-            <p><strong>Categoría:</strong> {{ $product->category->name ?? 'Sin categoría' }}</p>
-            <p>{{ $product->description }}</p>
+  {{-- Botón “Volver a Productos” --}}
+  <div class="mb-4">
+    <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">&larr; Volver a Productos</a>
+  </div>
 
-            <button class="btn">Añadir al carro</button>
-            <a href="{{ route('products.index') }}" style="margin-left:20px;">← Volver al listado</a>
-        </div>
+  {{-- Detalle del producto --}}
+  <div class="row gy-4">
+    <div class="col-12 col-md-6">
+      <img
+        src="{{ $product->image
+                 ? asset('storage/'.$product->image)
+                 : 'https://via.placeholder.com/600x400?text=Sin+imagen' }}"
+        class="img-fluid rounded"
+        alt="{{ $product->name }}"
+      >
     </div>
+    <div class="col-12 col-md-6 d-flex flex-column">
+      <h6 class="text-muted">{{ $product->category->name }}</h6>
+      <h2 class="mb-3">{{ $product->name }}</h2>
+      <p>{{ $product->description }}</p>
+      <p class="fw-bold fs-4 mb-4">${{ number_format($product->price,2) }}</p>
+
+      {{-- Formulario para “Añadir al carrito” --}}
+      <form method="POST" action="{{ route('cart.add', $product) }}" class="mb-4">
+        @csrf
+        <button type="submit" class="btn btn-warning btn-lg">
+          Añadir al carrito
+        </button>
+      </form>
+
+      {{-- (Opcional) Enlace a ver el carrito --}}
+      <a href="{{ route('cart.index') }}" class="btn btn-success">
+        <i class="bi bi-cart3 me-1"></i> Ver Carrito
+      </a>
+    </div>
+  </div>
+</div>
 @endsection
