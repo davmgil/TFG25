@@ -7,12 +7,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\PostController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
 
 // Home
 Route::get('/', function () {
@@ -55,7 +51,23 @@ Route::post('/cart/remove/{product}', [CartController::class, 'remove'])
 
 // Checkout (solo usuarios logueados)
 Route::middleware('auth')->group(function () {
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-    Route::get('/checkout/thankyou', [CheckoutController::class, 'thankyou'])->name('checkout.thankyou');
+    Route::get('/checkout', [CheckoutController::class, 'index'])
+         ->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'store'])
+         ->name('checkout.store');
+    Route::get('/checkout/thankyou', [CheckoutController::class, 'thankyou'])
+         ->name('checkout.thankyou');
 });
+
+// Blog (público)
+Route::get('/blog', [PostController::class, 'index'])
+     ->name('blog.index');
+
+// Blog (solo usuarios autenticados: create & store)
+Route::middleware('auth')->group(function () {
+    Route::get('/blog/create', [PostController::class, 'create'])->name('blog.create');
+    Route::post('/blog',       [PostController::class, 'store'])->name('blog.store');
+});
+
+Route::get('/blog/{post}', [PostController::class, 'show'])
+     ->name('blog.show');

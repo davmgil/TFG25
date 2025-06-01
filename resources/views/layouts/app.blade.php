@@ -32,8 +32,9 @@
             <a class="nav-link" href="{{ route('products.index') }}">Productos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Blog</a>
+            <a class="nav-link" href="{{ route('blog.index') }}">Blog</a>
           </li>
+
         </ul>
 
         {{-- Buscador visible en pantallas grandes --}}
