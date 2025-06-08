@@ -10,28 +10,17 @@ use App\Models\Product;
 
 class PostController extends Controller
 {
-    /**
-     * Mostrar listado de entradas (recetas).
-     */
     public function index()
     {
-        // Eager-load 'user' para evitar N+1
         $posts = Post::with('user')->orderBy('created_at', 'desc')->get();
         return view('blog.index', compact('posts'));
     }
 
-    /**
-     * Mostrar el formulario para crear una nueva receta.
-     * Protegido con 'auth' en rutas.
-     */
     public function create()
     {
         return view('blog.create');
     }
 
-    /**
-     * Almacenar la nueva receta en la base de datos.
-     */
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -59,10 +48,6 @@ class PostController extends Controller
                          ->with('success', 'Receta creada correctamente.');
     }
 
-    /**
-     * Mostrar el formulario para editar una receta existente.
-     * Solo el autor puede llegar aquí.
-     */
     public function edit(Post $post)
     {
         // Verificar que el usuario actual sea el autor
@@ -72,9 +57,6 @@ class PostController extends Controller
         return view('blog.edit', compact('post'));
     }
 
-    /**
-     * Actualizar la receta en la base de datos.
-     */
     public function update(Request $request, Post $post)
     {
         // Solo el autor puede actualizar
@@ -107,11 +89,9 @@ class PostController extends Controller
                          ->with('success', 'Receta actualizada correctamente.');
     }
 
-    /**
-     * Mostrar una entrada en detalle (por slug).
-     */
     public function show(Post $post)
     {
+        // Enlaza automáticamente nombres de productos en con su páagina de detalles
         $content = $post->content;
         $products = Product::all();
 

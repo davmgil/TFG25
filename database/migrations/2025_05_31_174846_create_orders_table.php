@@ -10,7 +10,6 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            // Ahora user_id NO es nullable, obliga a estar logueado
             $table->foreignId('user_id')
                   ->constrained()
                   ->onDelete('cascade');

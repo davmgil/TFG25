@@ -8,14 +8,10 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    /**
-     * Mostrar listado de productos con búsqueda, filtros y paginación.
-     */
     public function index(Request $request)
     {
         $query = Product::with('category');
 
-        // Búsqueda por texto
         if ($request->filled('search')) {
             $q = $request->search;
             $query->where(fn($sub) =>
@@ -24,12 +20,10 @@ class ProductController extends Controller
             );
         }
 
-        // Filtro por categoría
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
         }
 
-        // Filtro por precio
         if ($request->filled('min_price')) {
             $query->where('price', '>=', $request->min_price);
         }
@@ -42,15 +36,11 @@ class ProductController extends Controller
                             ->paginate(12)
                             ->appends($request->all());
 
-        return view('products.index', compact('products','categories'));
+        return view('products.index', compact('products', 'categories'));
     }
 
-    /**
-     * Detalle de un producto.
-     */
     public function show(Product $product)
     {
-
         $product->load('category');
 
         return view('products.show', compact('product'));

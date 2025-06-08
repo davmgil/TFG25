@@ -27,19 +27,21 @@
             <td class="d-flex align-items-center">
               <img
                 src="{{ $item['product']->image
-                         ? asset('storage/'.$item['product']->image)
-                         : 'https://via.placeholder.com/80x60?text=Sin+imagen' }}"
+                        ? asset('storage/'.$item['product']->image)
+                        : 'https://via.placeholder.com/80x60?text=Sin+imagen' }}"
                 alt="{{ $item['product']->name }}"
-                style="width: 80px; height: 60px; object-fit: cover;"
+                style="width: 60px; height: 60px; object-fit: cover;"
                 class="me-3 rounded"
               >
               <span>{{ $item['product']->name }}</span>
             </td>
             <td>{{ $item['quantity'] }}</td>
-            <td>${{ number_format($item['product']->price,2) }}</td>
-            <td>${{ number_format($item['subtotal'],2) }}</td>
+
+            {{-- Cambiado: usamos unit_price calculado desde el controlador --}}
+            <td>{{ number_format($item['unit_price'], 2) }}€</td>
+            
+            <td>{{ number_format($item['subtotal'], 2) }}€</td>
             <td>
-              {{-- Botón para quitar el producto del carrito --}}
               <form method="POST" action="{{ route('cart.remove', $item['product']) }}">
                 @csrf
                 <button type="submit" class="btn btn-sm btn-danger">
@@ -53,7 +55,7 @@
       <tfoot>
         <tr>
           <td colspan="3" class="text-end fw-bold">Total a Pagar:</td>
-          <td colspan="2" class="fw-bold">${{ number_format($total,2) }}</td>
+          <td colspan="2" class="fw-bold">{{ number_format($total,2) }}€</td>
         </tr>
       </tfoot>
     </table>

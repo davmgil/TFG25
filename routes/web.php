@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
@@ -11,15 +12,22 @@ use App\Http\Controllers\PostController;
 
 
 // Home
-Route::get('/', function () {
-    return view('index');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Productos
 Route::get('/products', [ProductController::class, 'index'])
      ->name('products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])
      ->name('products.show');
+
+// Footer
+Route::view('/politica-cookies', 'legal.cookies')
+     ->name('cookies.policy');
+Route::view('/terminos-condiciones', 'legal.terms')
+     ->name('terms.conditions');
+Route::view('/politica-privacidad', 'legal.privacy')
+     ->name('privacy.policy');
+
 
 // Autenticación manual
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])
@@ -35,10 +43,29 @@ Route::post('logout', [LoginController::class, 'logout'])
 
 // Perfil de usuario (autenticado)
 Route::middleware('auth')->group(function () {
-    Route::get('profile', [ProfileController::class, 'edit'])
-         ->name('profile.edit');
-    Route::post('profile', [ProfileController::class, 'update'])
-         ->name('profile.update');
+    // Mostrar la página “Mi Cuenta” (profile.index → método index)
+    Route::get('profile', [ProfileController::class, 'index'])
+         ->name('profile.index');
+
+    // Actualizar nombre y correo (profile.updateProfile → método updateProfile)
+    Route::post('profile/update-profile', [ProfileController::class, 'updateProfile'])
+         ->name('profile.updateProfile');
+
+    // CRUD de Direcciones:
+    Route::post('profile/addresses', [ProfileController::class, 'storeAddress'])
+         ->name('profile.addresses.store');
+    Route::put('profile/addresses/{address}', [ProfileController::class, 'updateAddress'])
+         ->name('profile.addresses.update');
+    Route::delete('profile/addresses/{address}', [ProfileController::class, 'destroyAddress'])
+         ->name('profile.addresses.destroy');
+
+    // CRUD de Métodos de Pago:
+    Route::post('profile/payments', [ProfileController::class, 'storePayment'])
+         ->name('profile.payments.store');
+    Route::put('profile/payments/{payment}', [ProfileController::class, 'updatePayment'])
+         ->name('profile.payments.update');
+    Route::delete('profile/payments/{payment}', [ProfileController::class, 'destroyPayment'])
+         ->name('profile.payments.destroy');
 });
 
 // Carrito de compras
@@ -73,6 +100,7 @@ Route::middleware('auth')->group(function () {
 
 });
 
+// Blog (solo usuarios autenticados, modificar)
 Route::get('/blog/{post}', [PostController::class, 'show'])
      ->name('blog.show');
          Route::get('/blog/{post}/edit',   [PostController::class, 'edit'])->name('blog.edit');

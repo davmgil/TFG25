@@ -18,17 +18,11 @@ class OrderItem extends Model
         'price',
     ];
 
-    /**
-     * Un orderItem pertenece a un pedido (Order).
-     */
     public function order()
     {
         return $this->belongsTo(Order::class);
     }
 
-    /**
-     * Un orderItem está asociado a un producto.
-     */
     public function product()
     {
         return $this->belongsTo(Product::class);

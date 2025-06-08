@@ -8,19 +8,14 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    /**
-     * Mostrar formulario de login.
-     */
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    /**
-     * Autenticar usuario.
-     */
     public function login(Request $request)
     {
+        // Validación de credenciales
         $credentials = $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required'],
@@ -28,6 +23,8 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+
+            // Redirige al destino original o a productos
             return redirect()->intended(route('products.index'));
         }
 
@@ -36,14 +33,14 @@ class LoginController extends Controller
             ->withInput($request->only('email'));
     }
 
-    /**
-     * Cerrar sesión.
-     */
     public function logout(Request $request)
     {
         Auth::logout();
+
+        // Limpia y renueva la sesión para seguridad
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('products.index');
     }
 }

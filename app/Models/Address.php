@@ -2,25 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Post extends Model
+class Address extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'title',
-        'slug',
-        'content',
         'user_id',
+        'label',
+        'street',
+        'city',
+        'state',
+        'zip_code',
+        'country',
+        'is_default',
     ];
-
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
 
     public function user()
     {

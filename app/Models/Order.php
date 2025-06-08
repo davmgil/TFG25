@@ -16,18 +16,12 @@ class Order extends Model
         'total',
     ];
 
-    /**
-     * Un pedido pertenece a un usuario (opcional).
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Un pedido tiene muchos orderItems.
-     */
-    public function items()
+    public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
     }

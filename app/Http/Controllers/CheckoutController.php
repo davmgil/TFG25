@@ -11,12 +11,9 @@ use App\Models\OrderItem;
 
 class CheckoutController extends Controller
 {
-    /**
-     * Mostrar la vista de confirmación de pedido.
-     * Solo usuarios autenticados pueden llegar aquí (gracias al middleware en rutas).
-     */
     public function index(Request $request)
     {
+        // Muestra resumen de carrito autenticado
         $cart = $request->session()->get('cart', []);
 
         $productsInCart = [];
@@ -40,9 +37,6 @@ class CheckoutController extends Controller
         return view('checkout.index', compact('productsInCart', 'total'));
     }
 
-    /**
-     * Procesar la compra: crear Order y OrderItems, vaciar carrito y redirigir a thankyou.
-     */
     public function store(Request $request)
     {
         $cart = $request->session()->get('cart', []);
@@ -52,7 +46,7 @@ class CheckoutController extends Controller
                              ->with('success', 'Tu carrito está vacío.');
         }
 
-        // Recalcular total por seguridad
+        // 1) Recalcular total por seguridad
         $total = 0;
         foreach ($cart as $productId => $quantity) {
             $product = Product::find($productId);
@@ -64,27 +58,33 @@ class CheckoutController extends Controller
 
         DB::beginTransaction();
         try {
-            // Crear el pedido principal
+            // 2) Crear el pedido principal
             $order = Order::create([
                 'user_id' => Auth::id(), // obligatorio porque user_id no es nullable
                 'total'   => $total,
             ]);
 
-            // Crear cada item del pedido
+            // 3) Crear cada item del pedido y actualizar times_sold en Product
             foreach ($cart as $productId => $quantity) {
                 $product = Product::find($productId);
                 if (! $product) {
                     continue;
                 }
+
+                // Crear el OrderItem
                 OrderItem::create([
                     'order_id'   => $order->id,
                     'product_id' => $product->id,
                     'quantity'   => $quantity,
                     'price'      => $product->price,
                 ]);
+
+                // ** Incrementar el contador de veces vendidas **
+                $product->times_sold += $quantity;
+                $product->save();
             }
 
-            // Vaciar el carrito de la sesión
+            // 4) Vaciar el carrito de la sesión
             $request->session()->forget('cart');
 
             DB::commit();
@@ -93,7 +93,7 @@ class CheckoutController extends Controller
             return back()->with('error', 'Hubo un error procesando tu pedido. Inténtalo de nuevo.');
         }
 
-        // Redirigir a página de agradecimiento
+        // 5) Redirigir a página de agradecimiento
         return redirect()->route('checkout.thankyou')
                          ->with('success', '¡Gracias por tu compra!');
     }

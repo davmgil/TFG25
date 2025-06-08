@@ -7,69 +7,42 @@ use App\Models\Product;
 
 class CartController extends Controller
 {
-    /**
-     * Mostrar el contenido del carrito.
-     */
     public function index(Request $request)
     {
-        // Tomamos el carrito de sesión (o array vacío si no existe)
+        // Recupera el carrito y calcula subtotales usando effective_price
         $cart = $request->session()->get('cart', []);
-
-        // $cart tendrá la forma: [ product_id => cantidad, ... ]
-        // Vamos a recopilar los objetos Product para mostrarlos
+        $total = 0;
         $productsInCart = [];
-        $total          = 0;
 
-        foreach ($cart as $productId => $quantity) {
-            $product = Product::find($productId);
-            if (!$product) continue;
+        foreach ($cart as $id => $qty) {
+            if (! $product = Product::find($id)) continue;
+            $unitPrice = $product->effective_price;         // precio con descuento
+            $subtotal  = $unitPrice * $qty;
+            $total    += $subtotal;
 
-            $subtotal = $product->price * $quantity;
-            $total += $subtotal;
-
-            $productsInCart[] = [
-                'product'  => $product,
-                'quantity' => $quantity,
-                'subtotal' => $subtotal,
-            ];
+            $productsInCart[] = compact('product','qty','unitPrice','subtotal');
         }
 
         return view('cart.index', compact('productsInCart','total'));
     }
 
-    /**
-     * Añadir un producto al carrito (1 unidad).
-     */
     public function add(Request $request, Product $product)
     {
-        // Tomamos el carrito actual de sesión
+        // Incrementa cantidad o inicia en 1, actualiza sesión
         $cart = $request->session()->get('cart', []);
-
-        // Si el producto ya estaba, sumamos 1; sino lo añadimos con 1
-        if (isset($cart[$product->id])) {
-            $cart[$product->id]++;
-        } else {
-            $cart[$product->id] = 1;
-        }
-
-        // Guardamos de nuevo en sesión
+        $cart[$product->id] = ($cart[$product->id] ?? 0) + 1;
         $request->session()->put('cart', $cart);
 
-        return redirect()->back()->with('success', 'Producto añadido al carrito.');
+        return back()->with('success','Producto añadido al carrito.');
     }
 
-    /**
-     * Quitar un producto del carrito por completo.
-     */
     public function remove(Request $request, Product $product)
     {
+        // Elimina producto del carrito
         $cart = $request->session()->get('cart', []);
+        unset($cart[$product->id]);
+        $request->session()->put('cart', $cart);
 
-        if (isset($cart[$product->id])) {
-            unset($cart[$product->id]);
-            $request->session()->put('cart', $cart);
-        }
-
-        return redirect()->back()->with('success', 'Producto eliminado del carrito.');
+        return back()->with('success','Producto eliminado del carrito.');
     }
 }

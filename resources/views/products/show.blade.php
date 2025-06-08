@@ -16,13 +16,19 @@
   {{-- Detalle del producto --}}
   <div class="row gy-4">
     <div class="col-12 col-md-6">
-      <img
-        src="{{ $product->image
-                 ? asset('storage/'.$product->image)
-                 : 'https://via.placeholder.com/600x400?text=Sin+imagen' }}"
-        class="img-fluid rounded"
-        alt="{{ $product->name }}"
-      >
+          <img
+            src="{{ $product->image
+                    ? asset('storage/'.$product->image)
+                    : 'https://via.placeholder.com/300x200?text=Sin+imagen' }}"
+            class="card-img-top"
+            alt="{{ $product->name }}"
+            style="
+              object-fit: cover;
+              width: 300px;
+              height: 300px;
+              margin: 0 auto;
+            "
+          >
     </div>
     <div class="col-12 col-md-6 d-flex flex-column">
       <h6 class="text-muted">{{ $product->category->name }}</h6>
