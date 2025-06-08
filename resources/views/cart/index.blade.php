@@ -36,10 +36,7 @@
               <span>{{ $item['product']->name }}</span>
             </td>
             <td>{{ $item['quantity'] }}</td>
-
-            {{-- Cambiado: usamos unit_price calculado desde el controlador --}}
             <td>{{ number_format($item['unit_price'], 2) }}€</td>
-            
             <td>{{ number_format($item['subtotal'], 2) }}€</td>
             <td>
               <form method="POST" action="{{ route('cart.remove', $item['product']) }}">
@@ -55,14 +52,13 @@
       <tfoot>
         <tr>
           <td colspan="3" class="text-end fw-bold">Total a Pagar:</td>
-          <td colspan="2" class="fw-bold">{{ number_format($total,2) }}€</td>
+          <td colspan="2" class="fw-bold">{{ number_format($total, 2) }}€</td>
         </tr>
       </tfoot>
     </table>
 
-    {{-- Botón para “Proceder al Checkout” (si ya implementaste esa ruta) --}}
     <div class="text-end">
-      <a href="{{ route('checkout.index') ?? '#' }}" class="btn btn-primary">
+      <a href="{{ route('checkout.index') }}" class="btn btn-primary">
         Proceder al Checkout
       </a>
     </div>
